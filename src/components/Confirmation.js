@@ -1,7 +1,8 @@
 import styled from "styled-components";  
 import { Link } from "react-router-dom";  
 
-export default function Confirmation() { 
+export default function Confirmation({userData}) {   
+    console.log(userData);
     return( 
         <>
         <Filmes>
@@ -10,20 +11,20 @@ export default function Confirmation() {
 
         <Info> 
             <a>Filme e Sessão</a>
-            <p>Interestelar</p> 
-            <p>24/06/2021 - 15:00</p>
+            <p>{userData.info.title}</p> 
+            <p>{userData.dias.date} - {userData.section.name}</p>
         </Info>  
 
         <Info> 
             <a>Ingressos</a>
-            <p>Interestelar</p> 
-            <p>24/06/2021 - 15:00</p>
+            <p>Assentos 14</p> 
+            <p>Assentos 15</p>
         </Info>  
 
         <Info> 
             <a>Comprador</a>
-            <p>Interestelar</p> 
-            <p>24/06/2021 - 15:00</p>
+            <p>Nome: {userData.nome}</p> 
+            <p>CPF: {userData.cpf}</p>
         </Info>   
 
         <Botao><Link to="/"><button>Voltar pra Home</button></Link></Botao>
@@ -56,7 +57,8 @@ const Info = styled.div`
     display:flex; 
     justify-content: center; 
     align-items: center; 
-    flex-direction: column;
+    flex-direction: column; 
+    margin-bottom: 40px;
 
     p{ 
         font-weight: 300; 
@@ -65,7 +67,8 @@ const Info = styled.div`
 
     a{ 
         font-weight: 700; 
-        font-size: 18px;  
+        font-size: 18px; 
+        margin-bottom: 10px;  
     }
 `   
 const Botao = styled.div`

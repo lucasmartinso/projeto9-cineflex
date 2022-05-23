@@ -4,22 +4,27 @@ import styled from "styled-components";
 import InfoFoter from "./InfoFooter"; 
 import axios from "axios";
 import { useParams } from "react-router-dom"; 
+import Confirmation from "./Confirmation";
 
-function Seats({name}) { 
+function Seats({index,name,isAvailable}) {  
+    const [selected, setSelected] = useState(false); 
+
+    console.log(selected);
+
     return(
-        <Sits>
-            <Link to={`sucesso`}><button>{name}</button></Link>
+        <Sits livre={isAvailable} selected={selected}>
+            <button onClick={() => setSelected(!selected)} selected={selected}>{name}</button>
         </Sits> 
     )
 }
 
-export default function Assentos({dados}) {  
+export default function Assentos({setUserData}) {  
 
-    const [name,setName] = useState(""); 
-    const [cpf,setCpf] = useState("");  
+    const [nome,setNome] = useState(""); 
+    const [cpf,setCpf] = useState("");   
 
-    function handleName(event) {
-        setName(event.target.value);
+    function handleNome(event) {
+        setNome(event.target.value);
     }  
 
     function handleCpf(event) {
@@ -27,11 +32,11 @@ export default function Assentos({dados}) {
     }
     
     function saveDados() { 
-        dados({name: name, cpf: cpf}); 
+        setUserData({nome, cpf, seat, info, dias, section}); 
         setCpf(""); 
-        setName("");
-    } 
-
+        setNome("");
+    }  
+ 
     const {idSessao} = useParams(); 
 
     const [section, setSection] = useState({});   
@@ -48,9 +53,8 @@ export default function Assentos({dados}) {
             setInfo({...response.data.movie}); 
             setDias({...response.data.day}); 
             setSeat([...response.data.seats]); 
-            console.log(response.data.seats);
         })
-    }, []);  
+    }, []);    
 
     return( 
         <>
@@ -58,11 +62,15 @@ export default function Assentos({dados}) {
             <p>Selecione o(s) assento(s)</p>  
         </Filmes>  
 
+        <Container>
         {seat.map((s,index) => (
             <Seats 
-                name = {s.name} 
+                name = {s.name}  
+                isAvailable = {s.isAvailable} 
+                index = {index+1}
             /> 
-        ))}
+        ))} 
+        </Container>
 
         <Estados>  
             <Selecionado>
@@ -87,8 +95,8 @@ export default function Assentos({dados}) {
                 <input 
                     type="text" 
                     placeholder="Digite seu nome..." 
-                    onChange={handleName} 
-                    value={name}
+                    onChange={handleNome} 
+                    value={nome}
                 >
                 </input> 
             </div>
@@ -107,7 +115,7 @@ export default function Assentos({dados}) {
             </div>
         </DadosUsuario> 
 
-        <Reservar><Link to="/horario/assentos/confirmation"><button onClick={saveDados}>Reservar Assento(s)</button></Link></Reservar> 
+        <Reservar><Link to="/sucesso"><button onClick={saveDados}>Reservar Assento(s)</button></Link></Reservar> 
 
         <InfoFoter 
             posterURL={info.posterURL} 
@@ -115,7 +123,9 @@ export default function Assentos({dados}) {
             weekday ={dias.weekday}
             date = {dias.date} 
             name = {section.name}
-        />
+        />  
+
+        <Espacamento></Espacamento>
         </>
     )
 } 
@@ -140,7 +150,6 @@ const Filmes = styled.div`
 `   
 
 const Sits = styled.div`
-    width: 100%; 
     height: 100%;  
     display: flex; 
     flex-wrap: wrap; 
@@ -148,14 +157,14 @@ const Sits = styled.div`
     button { 
         margin-left: 24px; 
         margin-bottom: 24px; 
-        background-color: rgba(195, 207, 217, 1); 
+        background-color: ${props => props.livre ?  (props.selected ? "rgba(141, 215, 207, 1)" : "rgba(195, 207, 217, 1)") : ("rgba(251, 225, 146, 1)")};
         width: 26px; 
         height: 26px; 
         color: rgba(0, 0, 0, 1);
         font-size: 11px; 
         font-weight: 400;  
         border-radius: 50%; 
-        border: 1px solid rgba(128, 143, 157, 1);  
+        border: ${props => props.livre ? (props.selected ? "1px solid rgba(69, 189, 176, 1)" : "1px solid rgba(128, 143, 157, 1)") : "1px solid rgba(247, 197, 43, 1)"};  
 
         &:hover { 
             cursor: pointer;
@@ -291,4 +300,13 @@ const Reservar = styled.div`
             cursor: pointer;  
         } 
     }
+` 
+
+const Container = styled.div`
+    display:flex;  
+    flex-wrap: wrap;
+` 
+
+const Espacamento = styled.div`
+    height: 100px;
 `

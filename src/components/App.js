@@ -6,10 +6,11 @@ import InitialScreen from "./InitialScreen";
 import SelectTime from "./SelectTime";  
 import Assentos from "./Assentos";
 import Confirmation from "./Confirmation";
-import { useState } from "react/cjs/react.production.min";
+import { useState } from "react";
 
 
 export default function App() {   
+    const [userData, setUserData] = useState("");
     return(   
         <>
         <BrowserRouter>
@@ -17,8 +18,8 @@ export default function App() {
             <Routes>
                 <Route path="/" element = {<InitialScreen />} /> 
                 <Route path="/filme/:idFilme" element = {<SelectTime />} /> 
-                <Route path="/sessao/:idSessao" element = {<Assentos />} />    
-                <Route path="/sucesso" element = {<Confirmation />} />
+                <Route path="/sessao/:idSessao" element = {<Assentos setUserData={setUserData}/>} />    
+                <Route path="/sucesso" element = {<Confirmation userData ={userData}/>} />
             </Routes>
         </BrowserRouter> 
         </>
