@@ -16,9 +16,9 @@ export default function App() {
             <Topo>CINEFLEX</Topo>  
             <Routes>
                 <Route path="/" element = {<InitialScreen />} /> 
-                <Route path="/horario" element = {<SelectTime />} /> 
-                <Route path="/horario/assentos" element = {<Assentos />} />    
-                <Route path="/horario/assentos/confirmation" element = {<Confirmation />} />
+                <Route path="/filme/:idFilme" element = {<SelectTime />} /> 
+                <Route path="/sessao/:idSessao" element = {<Assentos />} />    
+                <Route path="/sucesso" element = {<Confirmation />} />
             </Routes>
         </BrowserRouter> 
         </>

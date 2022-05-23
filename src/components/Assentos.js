@@ -1,6 +1,17 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
-import styled from "styled-components";  
+import { useState, useEffect } from "react";
+import styled from "styled-components";   
+import InfoFoter from "./InfoFooter"; 
+import axios from "axios";
+import { useParams } from "react-router-dom"; 
+
+function Seats({name}) { 
+    return(
+        <Sits>
+            <Link to={`sucesso`}><button>{name}</button></Link>
+        </Sits> 
+    )
+}
 
 export default function Assentos({dados}) {  
 
@@ -19,16 +30,39 @@ export default function Assentos({dados}) {
         dados({name: name, cpf: cpf}); 
         setCpf(""); 
         setName("");
-    }
+    } 
+
+    const {idSessao} = useParams(); 
+
+    const [section, setSection] = useState({});   
+    const [info, setInfo] = useState({});  
+    const [dias, setDias] = useState({});  
+    const [seat, setSeat] = useState([]);
+
+
+    useEffect(() => {    
+        const promise = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/showtimes/${idSessao}/seats`);  
+
+        promise.then(response => {
+            setSection({...response.data});  
+            setInfo({...response.data.movie}); 
+            setDias({...response.data.day}); 
+            setSeat([...response.data.seats]); 
+            console.log(response.data.seats);
+        })
+    }, []);  
+
     return( 
         <>
         <Filmes>
             <p>Selecione o(s) assento(s)</p>  
         </Filmes>  
 
-        <Sits>
-            <button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button><button>01</button>
-        </Sits> 
+        {seat.map((s,index) => (
+            <Seats 
+                name = {s.name} 
+            /> 
+        ))}
 
         <Estados>  
             <Selecionado>
@@ -75,15 +109,13 @@ export default function Assentos({dados}) {
 
         <Reservar><Link to="/horario/assentos/confirmation"><button onClick={saveDados}>Reservar Assento(s)</button></Link></Reservar> 
 
-        <Footer>
-            <FilmeCartaz>
-                <img src="https://play-lh.googleusercontent.com/em2griqrHoxmxEss_WM5Fi2iqSEKrEfLNAltjX54lREOR0nz0du__KuSi2bA_YNjS4w" />
-            </FilmeCartaz> 
-            <InfoFooter>
-                <p>Interestelar</p>  
-                <p>Quinta-feira - 15:00</p> 
-            </InfoFooter>
-        </Footer>
+        <InfoFoter 
+            posterURL={info.posterURL} 
+            title ={info.title}  
+            weekday ={dias.weekday}
+            date = {dias.date} 
+            name = {section.name}
+        />
         </>
     )
 } 
@@ -207,7 +239,7 @@ const DadosUsuario = styled.div`
     justify-content: center; 
     align-items: center; 
     flex-direction: column;
-    margin-top: 0px;  
+    margin-top: 20px;  
 
     div { 
         display: flex;  
@@ -260,38 +292,3 @@ const Reservar = styled.div`
         } 
     }
 `
-
-const Footer = styled.div`
-    position: fixed;  
-    left: 0; 
-    bottom: 0;
-    width: 100%; 
-    height: 117px; 
-    background-color: rgba(223, 230, 237, 1);  
-    display: flex;   
-    align-items: center; 
-    border: 1px solid rgba(158, 173, 186, 1); 
-`  
-const InfoFooter = styled.div`
-    p { 
-        font-size: 26px; 
-        font-weight: 300; 
-    }
-`
-
-const FilmeCartaz = styled.div`
-    width: 64px; 
-    height: 89px; 
-    background-color: rgba(255, 255, 255, 1); 
-    box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.1); 
-    display: flex; 
-    justify-content: center; 
-    align-items: center;   
-    margin-left: 14px; 
-    margin-right: 14px;
-
-    img { 
-        width: 87%; 
-        height: 87%;
-    }
-` 

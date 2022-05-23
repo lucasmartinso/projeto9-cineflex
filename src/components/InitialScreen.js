@@ -1,26 +1,19 @@
-import { Link } from "react-router-dom";   
+import { Link } from "react-router-dom";  
+import { useParams } from "react-router-dom";  
 import axios from 'axios';
 import { useEffect, useState } from "react"; 
 
 import styled from 'styled-components';
-import SelectTime from "./SelectTime";
-import Rodape from "./Rodape";
 
 function Filme({posterURL,index}) {  
-    const [clicado,setClicado] = useState(""); 
-    console.log(clicado);
-
+    
     return(  
         <>
-        <Link to="/horario">
+        <Link to= {`/filme/${index}`}>
         <FilmeCartaz>
-            <img src={posterURL} alt={index} onClick={() => setClicado({index})}/>
+            <img src={posterURL} alt={index} />
         </FilmeCartaz> 
         </Link>  
-
-        <Rodape 
-            index ={clicado} 
-        />
         </>
     )
 }

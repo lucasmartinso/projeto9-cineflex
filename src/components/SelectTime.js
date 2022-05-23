@@ -1,35 +1,74 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom"; 
-import Rodape from "./Rodape"; 
+import Rodape from "./Rodape";  
+import { useParams } from "react-router-dom"; 
+import axios from "axios"; 
+import { useEffect, useState } from "react";  
 
-function Time({day,horarios}) { 
-    return(
+function Time({key,date,weekday,showtimes}) {   
+    const {idFilme} = useParams(); 
+
+    const [movie, setMovie] = useState({}); 
+    const [dias, setDias] = useState([]);   
+
+
+    useEffect(() => {    
+        const promise = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/movies/${idFilme}/showtimes`);  
+
+        promise.then(response => {
+            setMovie({...response.data}); 
+            setDias([...response.data.days]);   
+        })
+    }, []); 
+
+
+    return( 
+        <>
         <DiaHorario>
-            <p>{day}</p>  
-            <Link to="/horario/assentos"><button>{horarios}</button></Link>
-            <Link to="/horario/assentos"><button>{horarios}</button></Link>
+            <p>{weekday} - {date}</p>  
+            {showtimes.map((s,index) => (
+            <Link to={`/sessao/${s.id}`}><button key={index}>{s.name}</button></Link> 
+            ))}
         </DiaHorario>   
+        
+        <Rodape 
+            posterURL = {movie.posterURL}
+            title= {movie.title}
+            index= {movie.id}
+        /> 
+        </>
     )
 }
 
 
-export default function SelectTime() {  
+export default function SelectTime() {   
+    const {idFilme} = useParams(); 
+
+    const [dias, setDias] = useState([]);  
+
+    useEffect(() => {    
+        const promise = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/movies/${idFilme}/showtimes`);  
+
+        promise.then(response => {
+            setDias([...response.data.days]); 
+        })
+    }, []); 
+    
     return(  
         <>
         <Filmes>
             <p>Selecione o horário</p>  
         </Filmes> 
 
-        <Time 
-            day = "Quinta-Feira - 24/05/2021" 
-            horarios = "19:00"
+        {dias.map((dia,index) => ( 
+        <Time  
+            key={index}
+            id = {dia.id} 
+            weekday = {dia.weekday}
+            date = {dia.date}   
+            showtimes = {dia.showtimes}
         /> 
-
-        <Time 
-            day = "Quinta-Feira - 24/05/2021" 
-            horarios = "19:00"
-        />
-        
+        ))}
         </>
     )
 } 
